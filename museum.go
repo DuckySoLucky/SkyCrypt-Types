@@ -1,6 +1,6 @@
 package skycrypttypes
 
-type SkyblockMuseum struct {
+type Museum struct {
 	Value     int64                  `json:"value,omitempty"`
 	Appraisal bool                   `json:"appraisal,omitempty"`
 	Items     *map[string]MuseumItem `json:"items,omitempty"`
