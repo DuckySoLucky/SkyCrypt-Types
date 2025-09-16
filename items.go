@@ -17,9 +17,9 @@ type Tag struct {
 	// HideFlags       int             `nbt:"HideFlags" json:"HideFlags,omitempty"`
 	// Unbreakable     int             `nbt:"Unbreakable" json:"Unbreakable,omitempty"`
 	// Enchantments    []Enchantment   `nbt:"ench" json:"ench,omitempty"`
-	ExtraAttributes ExtraAttributes `nbt:"ExtraAttributes" json:"ExtraAttributes,omitempty"`
-	Display         Display         `nbt:"display" json:"display"`
-	SkullOwner      *SkullOwner     `nbt:"SkullOwner" json:"SkullOwner,omitempty"`
+	ExtraAttributes *ExtraAttributes `nbt:"ExtraAttributes" json:"ExtraAttributes,omitempty"`
+	Display         Display          `nbt:"display" json:"display"`
+	SkullOwner      *SkullOwner      `nbt:"SkullOwner" json:"SkullOwner,omitempty"`
 }
 
 func (t *Tag) ToMap() TextureItemExtraAttributes {

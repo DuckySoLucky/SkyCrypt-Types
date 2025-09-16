@@ -45,6 +45,7 @@ type Member struct {
 	Collections         map[string]int         `json:"collection,omitempty"`
 	ItemData            ItemData               `json:"item_data,omitempty"`
 	WinterPlayerData    WinterPlayerIslandData `json:"winter_player_data,omitempty"`
+	SackCounts          map[string]int         `json:"sack_counts"`
 }
 
 type WinterPlayerIslandData struct {
