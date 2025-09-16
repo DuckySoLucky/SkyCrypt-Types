@@ -12,7 +12,7 @@ type Profile struct {
 	Selected          bool               `json:"selected"`
 	Members           map[string]Member  `json:"members"`
 	GameMode          string             `json:"game_mode,omitempty"`
-	Banking           Banking            `json:"banking,omitempty"`
+	Banking           *Banking           `json:"banking,omitempty"`
 	CommunityUpgrades *CommunityUpgrades `json:"community_upgrades,omitempty"`
 }
 
