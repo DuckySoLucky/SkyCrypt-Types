@@ -1,4 +1,4 @@
-package models
+package skycrypttypes
 
 import (
 	"encoding/json"
@@ -145,8 +145,8 @@ type Inventory struct {
 	PersonalVault EncodedItems            `json:"personal_vault_contents"`
 	Backpack      map[string]EncodedItems `json:"backpack_contents"`
 	Wardrobe      EncodedItems            `json:"wardrobe_contents"`
-	BagContents   BagContents                 `json:"bag_contents"`
-	Sacks         map[string]int              `json:"sacks_counts"`
+	BagContents   BagContents             `json:"bag_contents"`
+	Sacks         map[string]int          `json:"sacks_counts"`
 }
 
 type SharedInventory struct {

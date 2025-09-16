@@ -1,4 +1,4 @@
-package models
+package skycrypttypes
 
 type SkyblockMuseum struct {
 	Value     int64                  `json:"value,omitempty"`

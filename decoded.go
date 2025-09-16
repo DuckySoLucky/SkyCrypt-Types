@@ -1,4 +1,4 @@
-package models
+package skycrypttypes
 
 type EncodedItems struct {
 	Type int    `json:"type"`
