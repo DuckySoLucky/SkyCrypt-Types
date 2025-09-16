@@ -23,6 +23,10 @@ type Tag struct {
 }
 
 func (t *Tag) ToMap() TextureItemExtraAttributes {
+	if t.ExtraAttributes == nil {
+		t.ExtraAttributes = &ExtraAttributes{}
+	}
+
 	return TextureItemExtraAttributes{
 		ExtraAttributes: t.ExtraAttributes.ToMap(),
 		Display:         t.Display,
