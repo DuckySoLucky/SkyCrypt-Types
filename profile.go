@@ -26,7 +26,7 @@ type Member struct {
 	Currencies          Currencies             `json:"currencies,omitempty"`
 	FairySouls          *FairySouls            `json:"fairy_soul,omitempty"`
 	Inventory           *Inventory             `json:"inventory,omitempty"`
-	SharedInventory     *SharedInventory       `json:"shared_inventory,omitempty"`
+	SharedInventory     SharedInventory        `json:"shared_inventory,omitempty"`
 	Rift                Rift                   `json:"rift,omitempty"`
 	AccessoryBagStorage AccessoryBagStorage    `json:"accessory_bag_storage,omitempty"`
 	CrimsonIsle         CrimsonIsleData        `json:"nether_island_player_data,omitempty"`
