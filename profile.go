@@ -405,6 +405,36 @@ type MemberTrophyFish struct {
 	TotalCaught int            `json:"total_caught"`
 	Extra       map[string]int `json:"-"`
 }
+
+func (t *MemberTrophyFish) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	t.Extra = make(map[string]int)
+
+	for key, value := range raw {
+		switch key {
+		case "rewards":
+			if err := json.Unmarshal(value, &t.Rewards); err != nil {
+				return err
+			}
+		case "total_caught":
+			if err := json.Unmarshal(value, &t.TotalCaught); err != nil {
+				return err
+			}
+		default:
+			var num int
+			if err := json.Unmarshal(value, &num); err == nil {
+				t.Extra[key] = num
+			}
+		}
+	}
+
+	return nil
+}
+
 type ExperimentationGame struct {
 	LastAttempt int64            `json:"last_attempt,omitempty"`
 	LastClaimed int64            `json:"last_claimed,omitempty"`
