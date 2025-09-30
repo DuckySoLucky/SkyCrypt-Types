@@ -49,7 +49,7 @@ type Member struct {
 }
 
 type WinterPlayerIslandData struct {
-	RefinedJyrreUses int `json:"refined_bottle_of_jyrre_uses,omitempty"`
+	RefinedJyrreUses int `json:"refined_jyrre_uses,omitempty"`
 }
 
 type ItemData struct {
