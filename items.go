@@ -6,11 +6,11 @@ type EncodedItems struct {
 }
 
 type Item struct {
-	Count         *int   `nbt:"Count" json:"Count,omitempty"`
-	Damage        *int   `nbt:"Damage" json:"Damage,omitempty"`
-	ID            *int   `nbt:"id" json:"id,omitempty"`
-	Tag           *Tag   `nbt:"tag" json:"tag,omitempty"`
-	ContainsItems []Item `json:"containsItems,omitempty"`
+	Count         *int    `nbt:"Count" json:"Count,omitempty"`
+	Damage        *int    `nbt:"Damage" json:"Damage,omitempty"`
+	ID            *int    `nbt:"id" json:"id,omitempty"`
+	Tag           *Tag    `nbt:"tag" json:"tag,omitempty"`
+	ContainsItems []*Item `json:"containsItems,omitempty"`
 }
 
 type Tag struct {
