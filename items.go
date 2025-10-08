@@ -11,6 +11,7 @@ type Item struct {
 	ID            *int    `nbt:"id" json:"id,omitempty"`
 	Tag           *Tag    `nbt:"tag" json:"tag,omitempty"`
 	ContainsItems []*Item `json:"containsItems,omitempty"`
+	Price         float64 `json:"price,omitempty"`
 }
 
 type Tag struct {
