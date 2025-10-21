@@ -243,7 +243,7 @@ type Pets struct {
 }
 
 type Mining struct {
-	Nodes                  map[string]int     `json:"nodes,omitempty"`
+	Nodes                  map[string]int     `json:"-"`
 	Experience             float64            `json:"experience,omitempty"`
 	GreaterMinesLastAccess int64              `json:"greater_mines_last_access,omitempty"`
 	LastReset              int64              `json:"last_reset,omitempty"`
@@ -260,6 +260,39 @@ type Mining struct {
 	PowderSpentGlacite     int                `json:"powder_spent_glacite,omitempty"`
 	Crystals               map[string]Crystal `json:"crystals,omitempty"`
 	Biomes                 Biomes             `json:"biomes,omitempty"`
+}
+
+func (m *Mining) UnmarshalJSON(data []byte) error {
+	type Alias Mining
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(m),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	var raw map[string]interface{}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	m.Nodes = make(map[string]int)
+	if nodesRaw, ok := raw["nodes"]; ok {
+		if nodesMap, ok := nodesRaw.(map[string]interface{}); ok {
+			for k, v := range nodesMap {
+				switch val := v.(type) {
+				case float64:
+					m.Nodes[k] = int(val)
+				case int:
+					m.Nodes[k] = val
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 type Crystal struct {
