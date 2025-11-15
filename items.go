@@ -100,7 +100,7 @@ type ExtraAttributes struct {
 	Auction                int64          `nbt:"auction" json:"auction,omitempty"`
 	Bid                    int64          `nbt:"bid" json:"bid,omitempty"`
 	Model                  string         `nbt:"model" json:"model,omitempty"`
-	CollectedCoins         float64        `nbt:"collected_coins" json:"collected_coins,omitempty"`
+	CollectedCoins         int64          `nbt:"collected_coins" json:"collected_coins,omitempty"`
 }
 
 type RodPart struct {
