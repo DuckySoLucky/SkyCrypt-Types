@@ -101,8 +101,8 @@ type ExtraAttributes struct {
 	Bid                    int64          `nbt:"bid" json:"bid,omitempty"`
 	Model                  string         `nbt:"model" json:"model,omitempty"`
 	CollectedCoins         int64          `nbt:"collected_coins" json:"collected_coins,omitempty"`
+	Overclocker3000        int            `nbt:"levelable_overclocks" json:"levelable_overclocks,omitempty"`
 }
-
 type RodPart struct {
 	Part      string `nbt:"part" json:"part,omitempty"`
 	Soulbound bool   `nbt:"donated_museum" json:"donated_museum,omitempty"`
