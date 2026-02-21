@@ -46,6 +46,12 @@ type Member struct {
 	ItemData            ItemData               `json:"item_data,omitempty"`
 	WinterPlayerData    WinterPlayerIslandData `json:"winter_player_data,omitempty"`
 	SackCounts          map[string]int         `json:"sack_counts"`
+	Foraging            Foraging               `json:"foraging,omitempty"`
+	SkillTree           SkillTree              `json:"skill_tree,omitempty"`
+	ForagingCore        ForagingCore           `json:"foraging_core,omitempty"`
+	Shards              Shards                 `json:"shards,omitempty"`
+	Temples             Temples                `json:"temples,omitempty"`
+	Attributes          Attributes             `json:"attributes,omitempty"`
 }
 
 type WinterPlayerIslandData struct {
@@ -70,9 +76,10 @@ type CoopInvitation struct {
 }
 
 type PlayerData struct {
-	Experience         *Experience `json:"experience"`
-	Minions            []string    `json:"crafted_generators"`
-	ReaperPeppersEaten int         `json:"reaper_peppers_eaten,omitempty"`
+	Experience         *Experience    `json:"experience"`
+	Minions            []string       `json:"crafted_generators"`
+	ReaperPeppersEaten int            `json:"reaper_peppers_eaten,omitempty"`
+	GardenChips        map[string]int `json:"garden_chips,omitempty"`
 }
 
 type Experience struct {
@@ -87,6 +94,7 @@ type Experience struct {
 	SkillCarpentry    float64 `json:"SKILL_CARPENTRY"`
 	SkillCombat       float64 `json:"SKILL_COMBAT"`
 	SkillRunecrafting float64 `json:"SKILL_RUNECRAFTING"`
+	SkillHunting      float64 `json:"SKILL_HUNTING"`
 }
 
 type ProfileData struct {
@@ -243,12 +251,7 @@ type Pets struct {
 }
 
 type Mining struct {
-	Nodes                  map[string]int     `json:"-"`
-	Experience             float64            `json:"experience,omitempty"`
 	GreaterMinesLastAccess int64              `json:"greater_mines_last_access,omitempty"`
-	LastReset              int64              `json:"last_reset,omitempty"`
-	TokensSpent            int                `json:"tokens_spent,omitempty"`
-	SelectedPickaxeAbility string             `json:"selected_pickaxe_ability,omitempty"`
 	PowderMithril          int                `json:"powder_mithril,omitempty"`
 	PowderMithrilTotal     int                `json:"powder_mithril_total,omitempty"`
 	PowderSpentMithril     int                `json:"powder_spent_mithril,omitempty"`
@@ -260,39 +263,6 @@ type Mining struct {
 	PowderSpentGlacite     int                `json:"powder_spent_glacite,omitempty"`
 	Crystals               map[string]Crystal `json:"crystals,omitempty"`
 	Biomes                 Biomes             `json:"biomes,omitempty"`
-}
-
-func (m *Mining) UnmarshalJSON(data []byte) error {
-	type Alias Mining
-	aux := &struct {
-		*Alias
-	}{
-		Alias: (*Alias)(m),
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	var raw map[string]interface{}
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
-	}
-
-	m.Nodes = make(map[string]int)
-	if nodesRaw, ok := raw["nodes"]; ok {
-		if nodesMap, ok := nodesRaw.(map[string]interface{}); ok {
-			for k, v := range nodesMap {
-				switch val := v.(type) {
-				case float64:
-					m.Nodes[k] = int(val)
-				case int:
-					m.Nodes[k] = val
-				}
-			}
-		}
-	}
-
-	return nil
 }
 
 type Crystal struct {
@@ -343,8 +313,10 @@ type TrapperQuest struct {
 }
 
 type GardenProfileData struct {
-	Copper        int `json:"copper,omitempty"`
-	LarvaConsumed int `json:"larva_consumed,omitempty"`
+	Copper                    int      `json:"copper,omitempty"`
+	LarvaConsumed             int      `json:"larva_consumed,omitempty"`
+	AnalyzedGreenhouseCrops   []string `json:"analyzed_greenhouse_crops,omitempty"`
+	DiscoveredGreenhouseCrops []string `json:"discovered_greenhouse_crops,omitempty"`
 }
 
 type JacobContestData struct {
@@ -642,4 +614,216 @@ func (b *Bestiary) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+type SkillTree struct {
+	Nodes             map[string]SkillTreeNodeData `json:"-"`
+	SelectedAbility   map[string]string            `json:"selected_ability,omitempty"`
+	TokensSpent       map[string]int               `json:"tokens_spent,omitempty"`
+	Experience        map[string]float64           `json:"experience,omitempty"`
+	LastReset         map[string]int64             `json:"last_reset,omitempty"`
+	RefundAbilityFree bool                         `json:"refund_ability_free,omitempty"`
+}
+
+type SkillTreeNodeData struct {
+	Levels  map[string]int
+	Toggles map[string]bool
+}
+
+func (s *SkillTree) UnmarshalJSON(data []byte) error {
+	type Alias SkillTree
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(s),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	var raw map[string]interface{}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	s.Nodes = make(map[string]SkillTreeNodeData)
+	if nodesRaw, ok := raw["nodes"]; ok {
+		if nodesMap, ok := nodesRaw.(map[string]interface{}); ok {
+			for skill, v := range nodesMap {
+				if skillMap, ok := v.(map[string]interface{}); ok {
+					nodeData := SkillTreeNodeData{
+						Levels:  make(map[string]int),
+						Toggles: make(map[string]bool),
+					}
+					for k, val := range skillMap {
+						switch typedVal := val.(type) {
+						case float64:
+							nodeData.Levels[k] = int(typedVal)
+						case bool:
+							nodeData.Toggles[k] = typedVal
+						}
+					}
+					s.Nodes[skill] = nodeData
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+type Foraging struct {
+	Starlyn    *Starlyn   `json:"starlyn,omitempty"`
+	FishFamily []string   `json:"fish_family,omitempty"`
+	Hina       *Hina      `json:"hina,omitempty"`
+	TreeGifts  *TreeGifts `json:"tree_gifts,omitempty"`
+	Songs      *Songs     `json:"songs,omitempty"`
+}
+
+type Starlyn struct {
+	PersonalBests map[string]float64 `json:"personal_bests,omitempty"`
+}
+
+type Hina struct {
+	Tasks *HinaTasks `json:"tasks,omitempty"`
+}
+
+type HinaTasks struct {
+	TaskProgress   map[string]int `json:"task_progress,omitempty"`
+	CompletedTasks []string       `json:"completed_tasks,omitempty"`
+	ClaimedRewards []string       `json:"claimed_rewards,omitempty"`
+	TierClaimed    int            `json:"tier_claimed,omitempty"`
+}
+
+type TreeGifts struct {
+	Fig                  int            `json:"-"`
+	Mangrove             int            `json:"-"`
+	MilestoneTierClaimed map[string]int `json:"milestone_tier_claimed,omitempty"`
+	Extra                map[string]int `json:"-"`
+}
+
+func (t *TreeGifts) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	t.Extra = make(map[string]int)
+
+	for key, value := range raw {
+		switch key {
+		case "milestone_tier_claimed":
+			if err := json.Unmarshal(value, &t.MilestoneTierClaimed); err != nil {
+				return err
+			}
+		default:
+			var num int
+			if err := json.Unmarshal(value, &num); err == nil {
+				t.Extra[key] = num
+				switch key {
+				case "FIG":
+					t.Fig = num
+				case "MANGROVE":
+					t.Mangrove = num
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+type Songs struct {
+	Harp *HarpSongs `json:"harp,omitempty"`
+}
+
+type HarpSongs struct {
+	ClaimedTalisman   bool               `json:"claimed_talisman,omitempty"`
+	SelectedSong      string             `json:"selected_song,omitempty"`
+	SelectedSongEpoch int64              `json:"selected_song_epoch,omitempty"`
+	Extra             map[string]float64 `json:"-"`
+}
+
+func (h *HarpSongs) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	h.Extra = make(map[string]float64)
+
+	for key, value := range raw {
+		switch key {
+		case "claimed_talisman":
+			if err := json.Unmarshal(value, &h.ClaimedTalisman); err != nil {
+				return err
+			}
+		case "selected_song":
+			if err := json.Unmarshal(value, &h.SelectedSong); err != nil {
+				return err
+			}
+		case "selected_song_epoch":
+			if err := json.Unmarshal(value, &h.SelectedSongEpoch); err != nil {
+				return err
+			}
+		default:
+			var num float64
+			if err := json.Unmarshal(value, &num); err == nil {
+				h.Extra[key] = num
+			}
+		}
+	}
+
+	return nil
+}
+
+type ForagingCore struct {
+	DailyTreesCutDay              int      `json:"daily_trees_cut_day,omitempty"`
+	DailyTreesCut                 int      `json:"daily_trees_cut,omitempty"`
+	DailyGifts                    int      `json:"daily_gifts,omitempty"`
+	DailyLogCutDay                int      `json:"daily_log_cut_day,omitempty"`
+	DailyLogCut                   []string `json:"daily_log_cut,omitempty"`
+	ForestsWhispers               int      `json:"forests_whispers,omitempty"`
+	ForestsWhispersSpent          int      `json:"forests_whispers_spent,omitempty"`
+	CurrentDailyEffect            string   `json:"current_daily_effect,omitempty"`
+	CurrentDailyEffectLastChanged int64    `json:"current_daily_effect_last_changed,omitempty"`
+}
+
+type Shards struct {
+	Traps            ShardTraps   `json:"traps,omitempty"`
+	Owned            []OwnedShard `json:"owned,omitempty"`
+	ShardSort        string       `json:"shard_sort,omitempty"`
+	Fused            int          `json:"fused,omitempty"`
+	FusionResultSort string       `json:"fusion_result_sort,omitempty"`
+}
+
+type ShardTraps struct {
+	ActiveTraps []ShardTrap `json:"active_traps,omitempty"`
+}
+
+type ShardTrap struct {
+	TrapItem            string `json:"trap_item,omitempty"`
+	CaptureTime         int64  `json:"capture_time,omitempty"`
+	Mode                string `json:"mode,omitempty"`
+	Location            string `json:"location,omitempty"`
+	PlacedAt            int64  `json:"placed_at,omitempty"`
+	Shard               string `json:"shard,omitempty"`
+	Captured            bool   `json:"captured,omitempty"`
+	UUID                string `json:"uuid,omitempty"`
+	HuntingToolkit      bool   `json:"hunting_toolkit,omitempty"`
+	HuntingToolkitIndex int    `json:"hunting_toolkit_index,omitempty"`
+}
+
+type OwnedShard struct {
+	Type        string `json:"type,omitempty"`
+	AmountOwned int    `json:"amount_owned,omitempty"`
+	Captured    int64  `json:"captured,omitempty"`
+}
+
+type Temples struct {
+	UnlockedTemples []string `json:"unlocked_temples,omitempty"`
+}
+
+type Attributes struct {
+	Stacks map[string]int `json:"stacks,omitempty"`
 }
