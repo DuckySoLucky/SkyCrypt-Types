@@ -16,4 +16,5 @@ type Garden struct {
 	SelectedBarnSkin  string         `json:"selected_barn_skin"`
 	CropUpgradeLevels map[string]int `json:"crop_upgrade_levels"`
 	UnlockedBarnSkins []string       `json:"unlocked_barn_skins"`
+	GardenUpgrades    map[string]int `json:"garden_upgrades"`
 }
