@@ -52,6 +52,15 @@ type Member struct {
 	Shards              Shards                 `json:"shards,omitempty"`
 	Temples             Temples                `json:"temples,omitempty"`
 	Attributes          Attributes             `json:"attributes,omitempty"`
+	Events              Events                 `json:"events,omitempty"`
+}
+
+type Events struct {
+	Easter EasterEvent `json:"easter,omitempty"`
+}
+
+type EasterEvent struct {
+	RefinedDarkCacaoTruffles int `json:"refined_dark_cacao_truffles,omitempty"`
 }
 
 type WinterPlayerIslandData struct {
