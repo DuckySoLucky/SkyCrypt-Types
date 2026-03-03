@@ -21,6 +21,7 @@ type Tag struct {
 	ExtraAttributes *ExtraAttributes `nbt:"ExtraAttributes" json:"ExtraAttributes,omitempty"`
 	Display         Display          `nbt:"display" json:"display"`
 	SkullOwner      *SkullOwner      `nbt:"SkullOwner" json:"SkullOwner,omitempty"`
+	ItemModel       string           `nbt:"ItemModel" json:"ItemModel,omitempty"`
 }
 
 func (t *Tag) ToMap() TextureItemExtraAttributes {
@@ -32,6 +33,7 @@ func (t *Tag) ToMap() TextureItemExtraAttributes {
 		ExtraAttributes: t.ExtraAttributes.ToMap(),
 		Display:         t.Display,
 		SkullOwner:      t.SkullOwner,
+		ItemModel:       t.ItemModel,
 	}
 }
 
@@ -39,6 +41,7 @@ type TextureItemExtraAttributes struct {
 	ExtraAttributes map[string]interface{} `nbt:"ExtraAttributes" json:"ExtraAttributes,omitempty"`
 	Display         Display                `nbt:"display" json:"display"`
 	SkullOwner      *SkullOwner            `nbt:"SkullOwner" json:"SkullOwner,omitempty"`
+	ItemModel       string                 `nbt:"ItemModel" json:"ItemModel,omitempty"`
 }
 
 type ExtraAttributes struct {
