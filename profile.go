@@ -57,7 +57,7 @@ type Member struct {
 }
 
 type Loadouts struct {
-	Armor ArmorLoadout `json:"armor"`
+	Armor map[int]ArmorLoadout `json:"armor"`
 }
 
 type ArmorLoadout struct {
