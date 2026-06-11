@@ -20,43 +20,56 @@ type Member struct {
 	PlayerData          *PlayerData            `json:"player_data"`
 	CoopInvitation      *CoopInvitation        `json:"coop_invitation"`
 	Profile             *ProfileData           `json:"profile"`
-	JacobsContest       JacobsContest          `json:"jacobs_contest,omitempty"`
+	JacobsContest       JacobsContest          `json:"jacobs_contest"`
 	Pets                *Pets                  `json:"pets_data,omitempty"`
-	Leveling            Leveling               `json:"leveling,omitempty"`
-	Currencies          Currencies             `json:"currencies,omitempty"`
+	Leveling            Leveling               `json:"leveling"`
+	Currencies          Currencies             `json:"currencies"`
 	FairySouls          *FairySouls            `json:"fairy_soul,omitempty"`
 	Inventory           *Inventory             `json:"inventory,omitempty"`
-	SharedInventory     SharedInventory        `json:"shared_inventory,omitempty"`
-	Rift                Rift                   `json:"rift,omitempty"`
-	AccessoryBagStorage AccessoryBagStorage    `json:"accessory_bag_storage,omitempty"`
-	CrimsonIsle         CrimsonIsleData        `json:"nether_island_player_data,omitempty"`
-	Mining              Mining                 `json:"mining_core,omitempty"`
+	SharedInventory     SharedInventory        `json:"shared_inventory"`
+	Rift                Rift                   `json:"rift"`
+	AccessoryBagStorage AccessoryBagStorage    `json:"accessory_bag_storage"`
+	CrimsonIsle         CrimsonIsleData        `json:"nether_island_player_data"`
+	Mining              Mining                 `json:"mining_core"`
 	Objectives          *Objectives            `json:"objectives,omitempty"`
 	GlaciteTunnels      *GlaciteData           `json:"glacite_player_data,omitempty"`
-	Forge               Forge                  `json:"forge,omitempty"`
-	Quests              Quests                 `json:"quests,omitempty"`
-	Garden              GardenProfileData      `json:"garden_player_data,omitempty"`
-	PlayerStats         PlayerStats            `json:"player_stats,omitempty"`
-	TrophyFish          MemberTrophyFish       `json:"trophy_fish,omitempty"`
-	Experimentation     ExperimentationData    `json:"experimentation,omitempty"`
-	Dungeons            Dungeons               `json:"dungeons,omitempty"`
-	Slayer              Slayer                 `json:"slayer,omitempty"`
+	Forge               Forge                  `json:"forge"`
+	Quests              Quests                 `json:"quests"`
+	Garden              GardenProfileData      `json:"garden_player_data"`
+	PlayerStats         PlayerStats            `json:"player_stats"`
+	TrophyFish          MemberTrophyFish       `json:"trophy_fish"`
+	Experimentation     ExperimentationData    `json:"experimentation"`
+	Dungeons            Dungeons               `json:"dungeons"`
+	Slayer              Slayer                 `json:"slayer"`
 	Bestiary            *Bestiary              `json:"bestiary,omitempty"`
 	Collections         map[string]int         `json:"collection,omitempty"`
-	ItemData            ItemData               `json:"item_data,omitempty"`
-	WinterPlayerData    WinterPlayerIslandData `json:"winter_player_data,omitempty"`
+	ItemData            ItemData               `json:"item_data"`
+	WinterPlayerData    WinterPlayerIslandData `json:"winter_player_data"`
 	SackCounts          map[string]int         `json:"sack_counts"`
-	Foraging            Foraging               `json:"foraging,omitempty"`
-	SkillTree           SkillTree              `json:"skill_tree,omitempty"`
-	ForagingCore        ForagingCore           `json:"foraging_core,omitempty"`
-	Shards              Shards                 `json:"shards,omitempty"`
-	Temples             Temples                `json:"temples,omitempty"`
-	Attributes          Attributes             `json:"attributes,omitempty"`
-	Events              Events                 `json:"events,omitempty"`
+	Foraging            Foraging               `json:"foraging"`
+	SkillTree           SkillTree              `json:"skill_tree"`
+	ForagingCore        ForagingCore           `json:"foraging_core"`
+	Shards              Shards                 `json:"shards"`
+	Temples             Temples                `json:"temples"`
+	Attributes          Attributes             `json:"attributes"`
+	Events              Events                 `json:"events"`
+	Loadout             Loadouts               `json:"loadout"`
+}
+
+type Loadouts struct {
+	Armor ArmorLoadout `json:"armor"`
+}
+
+type ArmorLoadout struct {
+	Id         int          `json:"id"`
+	Helmet     EncodedItems `json:"HELMET"`
+	Chestplate EncodedItems `json:"CHESTPLATE"`
+	Leggings   EncodedItems `json:"LEGGINGS"`
+	Boots      EncodedItems `json:"BOOTS"`
 }
 
 type Events struct {
-	Easter EasterEvent `json:"easter,omitempty"`
+	Easter EasterEvent `json:"easter"`
 }
 
 type EasterEvent struct {
@@ -162,9 +175,9 @@ type Inventory struct {
 	Equipment     EncodedItems            `json:"equipment_contents"`
 	PersonalVault EncodedItems            `json:"personal_vault_contents"`
 	Backpack      map[string]EncodedItems `json:"backpack_contents"`
-	Wardrobe      EncodedItems            `json:"wardrobe_contents"`
-	BagContents   BagContents             `json:"bag_contents"`
-	Sacks         map[string]int          `json:"sacks_counts"`
+	// Wardrobe      EncodedItems            `json:"wardrobe_contents"`
+	BagContents BagContents    `json:"bag_contents"`
+	Sacks       map[string]int `json:"sacks_counts"`
 }
 
 type SharedInventory struct {
@@ -173,21 +186,21 @@ type SharedInventory struct {
 }
 
 type BagContents struct {
-	PotionBag   EncodedItems `json:"potion_bag,omitempty"`
-	TalismanBag EncodedItems `json:"talisman_bag,omitempty"`
-	FishingBag  EncodedItems `json:"fishing_bag,omitempty"`
-	SacksBag    EncodedItems `json:"sacks_bag,omitempty"`
-	Quiver      EncodedItems `json:"quiver,omitempty"`
+	PotionBag   EncodedItems `json:"potion_bag"`
+	TalismanBag EncodedItems `json:"talisman_bag"`
+	FishingBag  EncodedItems `json:"fishing_bag"`
+	SacksBag    EncodedItems `json:"sacks_bag"`
+	Quiver      EncodedItems `json:"quiver"`
 }
 
 type Rift struct {
-	Inventory  RiftInventory  `json:"inventory,omitempty"`
-	Access     RiftAccess     `json:"access,omitempty"`
-	DeadCats   DeadCats       `json:"dead_cats,omitempty"`
-	Enigma     RiftEnigma     `json:"enigma,omitempty"`
-	Castle     RiftCastle     `json:"castle,omitempty"`
-	Gallery    RiftGallery    `json:"gallery,omitempty"`
-	WitherCage RiftWitherCage `json:"wither_cage,omitempty"`
+	Inventory  RiftInventory  `json:"inventory"`
+	Access     RiftAccess     `json:"access"`
+	DeadCats   DeadCats       `json:"dead_cats"`
+	Enigma     RiftEnigma     `json:"enigma"`
+	Castle     RiftCastle     `json:"castle"`
+	Gallery    RiftGallery    `json:"gallery"`
+	WitherCage RiftWitherCage `json:"wither_cage"`
 }
 
 type RiftWitherCage struct {
@@ -227,7 +240,7 @@ type AccessoryBagStorage struct {
 }
 
 type CrimsonIsleData struct {
-	Abiphone            Abiphone       `json:"abiphone,omitempty"`
+	Abiphone            Abiphone       `json:"abiphone"`
 	Kuudra              map[string]int `json:"kuudra_completed_tiers,omitempty"`
 	Dojo                map[string]int `json:"dojo,omitempty"`
 	SelectedFaction     string         `json:"selected_faction,omitempty"`
@@ -241,7 +254,7 @@ type Abiphone struct {
 
 type DeadCats struct {
 	FoundCats []string `json:"found_cats,omitempty"`
-	Montezuma Pet      `json:"montezuma,omitempty"`
+	Montezuma Pet      `json:"montezuma"`
 }
 
 type Pet struct {
@@ -271,7 +284,7 @@ type Mining struct {
 	PowderGlaciteTotal     int                `json:"powder_glacite_total,omitempty"`
 	PowderSpentGlacite     int                `json:"powder_spent_glacite,omitempty"`
 	Crystals               map[string]Crystal `json:"crystals,omitempty"`
-	Biomes                 Biomes             `json:"biomes,omitempty"`
+	Biomes                 Biomes             `json:"biomes"`
 }
 
 type Crystal struct {
@@ -281,7 +294,7 @@ type Crystal struct {
 }
 
 type Biomes struct {
-	Precursor Precursor `json:"precursor,omitempty"`
+	Precursor Precursor `json:"precursor"`
 }
 
 type Precursor struct {
@@ -314,7 +327,7 @@ type ForgeProcess struct {
 }
 
 type Quests struct {
-	TrapperQuest TrapperQuest `json:"trapper_quest,omitempty"`
+	TrapperQuest TrapperQuest `json:"trapper_quest"`
 }
 
 type TrapperQuest struct {
@@ -353,10 +366,10 @@ type PlayerStats struct {
 		Milestone struct {
 			SeaCreaturesKilled float64 `json:"sea_creatures_killed,omitempty"`
 			OresMined          float64 `json:"ores_mined,omitempty"`
-		} `json:"milestone,omitempty"`
-	} `json:"pets,omitempty"`
-	Rift                  RiftPlayerData   `json:"rift,omitempty"`
-	Races                 Races            `json:"races,omitempty"`
+		} `json:"milestone"`
+	} `json:"pets"`
+	Rift                  RiftPlayerData   `json:"rift"`
+	Races                 Races            `json:"races"`
 	Gifts                 Gifts            `json:"gifts"`
 	WinterIslandData      WinterIslandData `json:"winter"`
 	EndIsland             EndIsland        `json:"end_island"`
@@ -473,7 +486,7 @@ func (e *ExperimentationGame) UnmarshalJSON(data []byte) error {
 	e.BestScores = make(map[int]int)
 	e.Raw = make(map[string]int64)
 
-	var raw map[string]interface{}
+	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
@@ -594,19 +607,19 @@ func (b *Bestiary) UnmarshalJSON(data []byte) error {
 		Alias: (*Alias)(b),
 	}
 	if err := json.Unmarshal(data, &aux); err != nil {
-		if !(json.Unmarshal(data, &map[string]interface{}{}) == nil && (err.Error() == "json: cannot unmarshal string into Go struct field .Alias.kills of type int" || err.Error() == "json: cannot unmarshal string into Go struct field .Alias.deaths of type int")) {
+		if !(json.Unmarshal(data, &map[string]any{}) == nil && (err.Error() == "json: cannot unmarshal string into Go struct field .Alias.kills of type int" || err.Error() == "json: cannot unmarshal string into Go struct field .Alias.deaths of type int")) {
 			return err
 		}
 	}
 
-	var raw map[string]interface{}
+	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 
 	b.Kills = make(map[string]int)
 	if killsRaw, ok := raw["kills"]; ok {
-		if killsMap, ok := killsRaw.(map[string]interface{}); ok {
+		if killsMap, ok := killsRaw.(map[string]any); ok {
 			for k, v := range killsMap {
 				switch val := v.(type) {
 				case float64:
@@ -650,16 +663,16 @@ func (s *SkillTree) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	var raw map[string]interface{}
+	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 
 	s.Nodes = make(map[string]SkillTreeNodeData)
 	if nodesRaw, ok := raw["nodes"]; ok {
-		if nodesMap, ok := nodesRaw.(map[string]interface{}); ok {
+		if nodesMap, ok := nodesRaw.(map[string]any); ok {
 			for skill, v := range nodesMap {
-				if skillMap, ok := v.(map[string]interface{}); ok {
+				if skillMap, ok := v.(map[string]any); ok {
 					nodeData := SkillTreeNodeData{
 						Levels:  make(map[string]int),
 						Toggles: make(map[string]bool),
@@ -799,7 +812,7 @@ type ForagingCore struct {
 }
 
 type Shards struct {
-	Traps            ShardTraps   `json:"traps,omitempty"`
+	Traps            ShardTraps   `json:"traps"`
 	Owned            []OwnedShard `json:"owned,omitempty"`
 	ShardSort        string       `json:"shard_sort,omitempty"`
 	Fused            int          `json:"fused,omitempty"`

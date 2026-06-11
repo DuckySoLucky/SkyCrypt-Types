@@ -13,7 +13,7 @@ type Player struct {
 	Rank                      string       `json:"rank"`
 	RankPlusColor             string       `json:"rankPlusColor,omitempty"`
 	PackageRank               string       `json:"packageRank,omitempty"`
-	Achievements              Achievements `json:"achievements,omitempty"`
+	Achievements              Achievements `json:"achievements"`
 	ClaimedPotatoTalisman     int64        `json:"claimed_potato_talisman,omitempty"`
 	ClaimedPotatoBasket       int64        `json:"claimed_potato_basket,omitempty"`
 	ClaimPotatoWarSilverMedal int64        `json:"claim_potato_war_silver_medal,omitempty"`

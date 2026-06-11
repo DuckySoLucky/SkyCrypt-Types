@@ -38,10 +38,10 @@ func (t *Tag) ToMap() TextureItemExtraAttributes {
 }
 
 type TextureItemExtraAttributes struct {
-	ExtraAttributes map[string]interface{} `nbt:"ExtraAttributes" json:"ExtraAttributes,omitempty"`
-	Display         Display                `nbt:"display" json:"display"`
-	SkullOwner      *SkullOwner            `nbt:"SkullOwner" json:"SkullOwner,omitempty"`
-	ItemModel       string                 `nbt:"ItemModel" json:"ItemModel,omitempty"`
+	ExtraAttributes map[string]any `nbt:"ExtraAttributes" json:"ExtraAttributes,omitempty"`
+	Display         Display        `nbt:"display" json:"display"`
+	SkullOwner      *SkullOwner    `nbt:"SkullOwner" json:"SkullOwner,omitempty"`
+	ItemModel       string         `nbt:"ItemModel" json:"ItemModel,omitempty"`
 }
 
 type ExtraAttributes struct {
@@ -87,9 +87,9 @@ type ExtraAttributes struct {
 	DrillPartUpgradeModule string         `nbt:"drill_part_upgrade_module" json:"drill_part_upgrade_module,omitempty"`
 	DrillPartFuelTank      string         `nbt:"drill_part_fuel_tank" json:"drill_part_fuel_tank,omitempty"`
 	DrillPartEngine        string         `nbt:"drill_part_engine" json:"drill_part_engine,omitempty"`
-	Line                   RodPart        `nbt:"line" json:"line,omitempty"`
-	Hook                   RodPart        `nbt:"hook" json:"hook,omitempty"`
-	Sinker                 RodPart        `nbt:"sinker" json:"sinker,omitempty"`
+	Line                   RodPart        `nbt:"line" json:"line"`
+	Hook                   RodPart        `nbt:"hook" json:"hook"`
+	Sinker                 RodPart        `nbt:"sinker" json:"sinker"`
 	Soulbound              bool           `nbt:"donated_museum" json:"donated_museum,omitempty"`
 	Attributes             map[string]int `nbt:"attributes" json:"attributes,omitempty"`
 	Edition                int            `nbt:"edition" json:"edition,omitempty"`
@@ -111,8 +111,8 @@ type RodPart struct {
 	Soulbound bool   `nbt:"donated_museum" json:"donated_museum,omitempty"`
 }
 
-func (t *ExtraAttributes) ToMap() map[string]interface{} {
-	return map[string]interface{}{
+func (t *ExtraAttributes) ToMap() map[string]any {
+	return map[string]any{
 		"id":                  t.Id,
 		"uuid":                t.Uuid,
 		"timestamp":           t.Timestamp,
