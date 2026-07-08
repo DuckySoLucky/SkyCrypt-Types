@@ -57,7 +57,52 @@ type Member struct {
 }
 
 type Loadouts struct {
-	Armor map[int]ArmorLoadout `json:"armor"`
+	Armor LoadoutSets `json:"armor"`
+}
+
+type LoadoutSets struct {
+	EquippedSet int
+	Sets        map[int]ArmorLoadout
+}
+
+func (l *LoadoutSets) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	l.Sets = make(map[int]ArmorLoadout)
+	for key, value := range raw {
+		switch key {
+		case "equipped_set":
+			if err := json.Unmarshal(value, &l.EquippedSet); err != nil {
+				return err
+			}
+		default:
+			setID, err := strconv.Atoi(key)
+			if err != nil {
+				continue
+			}
+
+			var loadout ArmorLoadout
+			if err := json.Unmarshal(value, &loadout); err != nil {
+				return err
+			}
+			l.Sets[setID] = loadout
+		}
+	}
+
+	return nil
+}
+
+func (l LoadoutSets) MarshalJSON() ([]byte, error) {
+	raw := make(map[string]any, len(l.Sets)+1)
+	raw["equipped_set"] = l.EquippedSet
+	for setID, loadout := range l.Sets {
+		raw[strconv.Itoa(setID)] = loadout
+	}
+
+	return json.Marshal(raw)
 }
 
 type ArmorLoadout struct {
