@@ -382,7 +382,104 @@ type RiftAccess struct {
 }
 
 type AccessoryBagStorage struct {
-	SelectedPower string `json:"selected_power,omitempty"`
+	SelectedPower         string     `json:"selected_power,omitempty"`
+	HighestMagicalPower   int        `json:"highest_magical_power,omitempty"`
+	UnlockedPowers        []string   `json:"unlocked_powers,omitempty"`
+	BagUpgradesPurchased  int        `json:"bag_upgrades_purchased,omitempty"`
+	Tuning                TuningData `json:"tuning,omitempty"`
+}
+
+type TuningData struct {
+	HighestUnlockedSlot int
+	Slots               map[int]map[string]int
+	PurchaseTS          map[int]int64
+}
+
+func (t *TuningData) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	t.Slots = make(map[int]map[string]int)
+	t.PurchaseTS = make(map[int]int64)
+	for key, value := range raw {
+		switch {
+		case key == "highest_unlocked_slot":
+			if err := json.Unmarshal(value, &t.HighestUnlockedSlot); err != nil {
+				return err
+			}
+		case len(key) > 5 && key[:5] == "slot_":
+			slotID, err := strconv.Atoi(key[5:])
+			if err != nil {
+				continue
+			}
+
+			var slotRaw map[string]json.RawMessage
+			if err := json.Unmarshal(value, &slotRaw); err != nil {
+				return err
+			}
+
+			slotStats := make(map[string]int)
+			for statKey, statValue := range slotRaw {
+				if statKey == "purchase_ts" {
+					var purchaseTS int64
+					if err := json.Unmarshal(statValue, &purchaseTS); err != nil {
+						return err
+					}
+					t.PurchaseTS[slotID] = purchaseTS
+					continue
+				}
+
+				var stat int
+				if err := json.Unmarshal(statValue, &stat); err != nil {
+					return err
+				}
+				slotStats[statKey] = stat
+			}
+
+			t.Slots[slotID] = slotStats
+		}
+	}
+
+	return nil
+}
+
+func (t TuningData) MarshalJSON() ([]byte, error) {
+	if t.Slots == nil {
+		t.Slots = map[int]map[string]int{}
+	}
+
+	if t.PurchaseTS == nil {
+		t.PurchaseTS = map[int]int64{}
+	}
+
+	raw := make(map[string]any, len(t.Slots)+1)
+	raw["highest_unlocked_slot"] = t.HighestUnlockedSlot
+	for slotID, slotStats := range t.Slots {
+		slotRaw := make(map[string]any, len(slotStats)+1)
+		if purchaseTS, ok := t.PurchaseTS[slotID]; ok && purchaseTS != 0 {
+			slotRaw["purchase_ts"] = purchaseTS
+		}
+
+		for statKey, statValue := range slotStats {
+			slotRaw[statKey] = statValue
+		}
+
+		raw[fmt.Sprintf("slot_%d", slotID)] = slotRaw
+	}
+
+	for slotID, purchaseTS := range t.PurchaseTS {
+		if _, exists := t.Slots[slotID]; exists || purchaseTS == 0 {
+			continue
+		}
+
+		raw[fmt.Sprintf("slot_%d", slotID)] = map[string]any{
+			"purchase_ts": purchaseTS,
+		}
+	}
+
+	return json.Marshal(raw)
 }
 
 type CrimsonIsleData struct {
