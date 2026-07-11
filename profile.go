@@ -57,26 +57,103 @@ type Member struct {
 }
 
 type Loadouts struct {
-	Armor LoadoutSets `json:"armor"`
+	Armor     ArmorLoadoutSets     `json:"armor"`
+	Equipment EquipmentLoadoutSets `json:"equipment"`
+	Loadouts  SavedLoadoutSets     `json:"loadouts"`
 }
 
-type LoadoutSets struct {
+type ArmorLoadoutSets struct {
 	EquippedSet int
 	Sets        map[int]ArmorLoadout
 }
 
-func (l *LoadoutSets) UnmarshalJSON(data []byte) error {
+func (l *ArmorLoadoutSets) UnmarshalJSON(data []byte) error {
+	sets, equippedSet, err := unmarshalIndexedSets[ArmorLoadout](data)
+	if err != nil {
+		return err
+	}
+
+	l.Sets = sets
+	l.EquippedSet = equippedSet
+
+	return nil
+}
+
+func (l ArmorLoadoutSets) MarshalJSON() ([]byte, error) {
+	return marshalIndexedSets(l.Sets, l.EquippedSet)
+}
+
+type EquipmentLoadoutSets struct {
+	EquippedSet int
+	Sets        map[int]EquipmentLoadout
+}
+
+func (l *EquipmentLoadoutSets) UnmarshalJSON(data []byte) error {
+	sets, equippedSet, err := unmarshalIndexedSets[EquipmentLoadout](data)
+	if err != nil {
+		return err
+	}
+
+	l.Sets = sets
+	l.EquippedSet = equippedSet
+
+	return nil
+}
+
+func (l EquipmentLoadoutSets) MarshalJSON() ([]byte, error) {
+	return marshalIndexedSets(l.Sets, l.EquippedSet)
+}
+
+type SavedLoadoutSets struct {
+	Sets map[int]SavedLoadout
+}
+
+func (l *SavedLoadoutSets) UnmarshalJSON(data []byte) error {
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
 
-	l.Sets = make(map[int]ArmorLoadout)
+	l.Sets = make(map[int]SavedLoadout)
+	for key, value := range raw {
+		setID, err := strconv.Atoi(key)
+		if err != nil {
+			continue
+		}
+
+		var loadout SavedLoadout
+		if err := json.Unmarshal(value, &loadout); err != nil {
+			return err
+		}
+
+		l.Sets[setID] = loadout
+	}
+
+	return nil
+}
+
+func (l SavedLoadoutSets) MarshalJSON() ([]byte, error) {
+	raw := make(map[string]any, len(l.Sets))
+	for setID, loadout := range l.Sets {
+		raw[strconv.Itoa(setID)] = loadout
+	}
+
+	return json.Marshal(raw)
+}
+
+func unmarshalIndexedSets[T any](data []byte) (map[int]T, int, error) {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return nil, 0, err
+	}
+
+	sets := make(map[int]T)
+	equippedSet := 0
 	for key, value := range raw {
 		switch key {
 		case "equipped_set":
-			if err := json.Unmarshal(value, &l.EquippedSet); err != nil {
-				return err
+			if err := json.Unmarshal(value, &equippedSet); err != nil {
+				return nil, 0, err
 			}
 		default:
 			setID, err := strconv.Atoi(key)
@@ -84,21 +161,25 @@ func (l *LoadoutSets) UnmarshalJSON(data []byte) error {
 				continue
 			}
 
-			var loadout ArmorLoadout
+			var loadout T
 			if err := json.Unmarshal(value, &loadout); err != nil {
-				return err
+				return nil, 0, err
 			}
-			l.Sets[setID] = loadout
+			sets[setID] = loadout
 		}
 	}
 
-	return nil
+	return sets, equippedSet, nil
 }
 
-func (l LoadoutSets) MarshalJSON() ([]byte, error) {
-	raw := make(map[string]any, len(l.Sets)+1)
-	raw["equipped_set"] = l.EquippedSet
-	for setID, loadout := range l.Sets {
+func marshalIndexedSets[T any](sets map[int]T, equippedSet int) ([]byte, error) {
+	if sets == nil {
+		sets = map[int]T{}
+	}
+
+	raw := make(map[string]any, len(sets)+1)
+	raw["equipped_set"] = equippedSet
+	for setID, loadout := range sets {
 		raw[strconv.Itoa(setID)] = loadout
 	}
 
@@ -111,6 +192,26 @@ type ArmorLoadout struct {
 	Chestplate EncodedItems `json:"CHESTPLATE"`
 	Leggings   EncodedItems `json:"LEGGINGS"`
 	Boots      EncodedItems `json:"BOOTS"`
+}
+
+type EquipmentLoadout struct {
+	Id             int          `json:"id"`
+	EquipmentSlot1 EncodedItems `json:"EQUIPMENT_SLOT_1"`
+	EquipmentSlot2 EncodedItems `json:"EQUIPMENT_SLOT_2"`
+	EquipmentSlot3 EncodedItems `json:"EQUIPMENT_SLOT_3"`
+	EquipmentSlot4 EncodedItems `json:"EQUIPMENT_SLOT_4"`
+}
+
+type SavedLoadout struct {
+	ID                       int    `json:"id"`
+	Name                     string `json:"name"`
+	ArmorSetID               int    `json:"armor_set_id,omitempty"`
+	EquipmentSetID           int    `json:"equipment_set_id,omitempty"`
+	PowerStoneID             string `json:"power_stone,omitempty"`
+	PetUUID                  string `json:"pet,omitempty"`
+	TuningPointsSlot         int    `json:"tuning_points_slot,omitempty"`
+	MiningCoreSelectedSlot   int    `json:"mining_core_selected_slot,omitempty"`
+	ForagingCoreSelectedSlot int    `json:"foraging_core_selected_slot,omitempty"`
 }
 
 type Events struct {
