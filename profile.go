@@ -404,6 +404,8 @@ type DeadCats struct {
 }
 
 type Pet struct {
+	UUID       string  `json:"uuid,omitempty"`
+	UniqueId   string  `json:"uuiuniqueId,omitempty"`
 	Type       string  `json:"type,omitempty"`
 	Experience float64 `json:"exp,omitempty"`
 	Active     bool    `json:"active,omitempty"`
