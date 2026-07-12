@@ -382,11 +382,11 @@ type RiftAccess struct {
 }
 
 type AccessoryBagStorage struct {
-	SelectedPower         string     `json:"selected_power,omitempty"`
-	HighestMagicalPower   int        `json:"highest_magical_power,omitempty"`
-	UnlockedPowers        []string   `json:"unlocked_powers,omitempty"`
-	BagUpgradesPurchased  int        `json:"bag_upgrades_purchased,omitempty"`
-	Tuning                TuningData `json:"tuning,omitempty"`
+	SelectedPower        string     `json:"selected_power,omitempty"`
+	HighestMagicalPower  int        `json:"highest_magical_power,omitempty"`
+	UnlockedPowers       []string   `json:"unlocked_powers,omitempty"`
+	BagUpgradesPurchased int        `json:"bag_upgrades_purchased,omitempty"`
+	Tuning               TuningData `json:"tuning,omitempty"`
 }
 
 type TuningData struct {
@@ -502,7 +502,7 @@ type DeadCats struct {
 
 type Pet struct {
 	UUID       string  `json:"uuid,omitempty"`
-	UniqueId   string  `json:"uuiuniqueId,omitempty"`
+	UniqueId   string  `json:"uniqueId,omitempty"`
 	Type       string  `json:"type,omitempty"`
 	Experience float64 `json:"exp,omitempty"`
 	Active     bool    `json:"active,omitempty"`
