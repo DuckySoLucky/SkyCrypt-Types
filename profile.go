@@ -576,7 +576,50 @@ type Quests struct {
 }
 
 type TrapperQuest struct {
-	PeltCount int `json:"pelt_count,omitempty"`
+	PeltCount    int            `json:"pelt_count,omitempty"`
+	LastTaskTime int64          `json:"last_task_time,omitempty"`
+	Kills        map[string]any `json:"kills,omitempty"`
+}
+
+func (t *TrapperQuest) UnmarshalJSON(data []byte) error {
+	type Alias TrapperQuest
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	var raw map[string]any
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	t.Kills = make(map[string]any)
+	if killsRaw, ok := raw["kills"]; ok {
+		if killsMap, ok := killsRaw.(map[string]any); ok {
+			for k, v := range killsMap {
+				switch val := v.(type) {
+				case float64:
+					t.Kills[k] = int(val)
+				case int:
+					t.Kills[k] = val
+				case string:
+					if i, err := strconv.Atoi(val); err == nil {
+						t.Kills[k] = i
+					} else {
+						t.Kills[k] = val
+					}
+				default:
+					t.Kills[k] = val
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 type GardenProfileData struct {
