@@ -888,18 +888,6 @@ type Bestiary struct {
 }
 
 func (b *Bestiary) UnmarshalJSON(data []byte) error {
-	type Alias Bestiary
-	aux := &struct {
-		*Alias
-	}{
-		Alias: (*Alias)(b),
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		if !(json.Unmarshal(data, &map[string]any{}) == nil && (err.Error() == "json: cannot unmarshal string into Go struct field .Alias.kills of type int" || err.Error() == "json: cannot unmarshal string into Go struct field .Alias.deaths of type int")) {
-			return err
-		}
-	}
-
 	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
